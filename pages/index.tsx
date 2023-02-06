@@ -39,7 +39,7 @@ export default function Home() {
             })
         })
         const json = await response.json()
-        let itinerary = json.itinerary
+        let itinerary = json.itinerary_text
 
         setItinerary(itinerary)
         setMessage('Places are sorted ...')

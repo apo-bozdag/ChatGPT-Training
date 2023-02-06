@@ -4,7 +4,7 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 type Data = {
   message: string,
   pointsOfInterestPrompt: any,
-  itinerary: any,
+  itinerary_text: any,
 }
 
 const GPT_KEY = process.env.GPT_API_KEY
@@ -42,12 +42,18 @@ export default async function handler(
       })
     })
     const itinerary = await response.json()
-    const pointsOfInterestPrompt = 'Extract the main points of interest out of this text, with no additional words, only the names of the locations, separated by commas: ' + itinerary.choices[0].text
+
+    let itinerary_text, pointsOfInterestPrompt;
+    if (itinerary.choices.length > 0) {
+      itinerary_text = itinerary.choices[0].text,
+      pointsOfInterestPrompt = 'Extract the main points of interest out of this text, with no additional words, only the names of the locations, separated by commas: ' + itinerary_text
+    }
+
 
     res.status(200).json({
       message: 'success',
       pointsOfInterestPrompt,
-      itinerary: itinerary.choices[0].text
+      itinerary_text
     })
 
   } catch (err) {
