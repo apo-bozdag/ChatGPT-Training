@@ -131,7 +131,7 @@ export default function Home() {
                             {
                                 loading && (
                                     <Loading color="secondary" textColor="secondary"
-                                             size="lg" isBlurred
+                                             size="lg"
                                              css={{
                                                  position: "absolute",
                                                  bgBlur: "#ffffff66",
@@ -164,7 +164,7 @@ export default function Home() {
                                                 remarkPlugins={[remarkGfm]}
                                                 components={{
                                                     a: props => {
-                                                        return <a target="_blank" rel="no-opener" href={props.href}>{props.children}</a>
+                                                        return <a target="_blank" rel="noopener noreferrer" href={props.href}>{props.children}</a>
                                                     }
                                                 }}
                                             >
