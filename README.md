@@ -2,7 +2,7 @@
 
 ### Install
 
-Configure API keys in `.env.local`:
+Configure API keys in `.env`:
 
 ```
 GPT_API_KEY=xxx
