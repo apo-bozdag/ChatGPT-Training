@@ -38,7 +38,7 @@ export default async function handler(
 
   if (get_poi_names) {
     let pointsOfInterest = await get_poi_names.json()
-    if (pointsOfInterest.choices.length > 0) {
+    if (pointsOfInterest.choices && pointsOfInterest.choices.length > 0) {
       let poi_list = pointsOfInterest.choices[0]
       poi_list = poi_list.text.split('\n')
       poi_list = poi_list[poi_list.length - 1]

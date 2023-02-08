@@ -1,36 +1,17 @@
-import {
-    useTheme,
-    Container,
-    Grid,
-    Card,
-    Row,
-    Col,
-    Spacer,
-    Text,
-    Input,
-    Button,
-    Loading
-} from '@nextui-org/react';
-import React, { useState } from 'react'
+import {Button, Card, Col, Container, Grid, Input, Loading, Row, Spacer, Text} from '@nextui-org/react';
+import React, {useState} from 'react'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
-import Header from '../components/header'
+import Header from '@/components/header'
+import MapContainer from "@/components/map";
 
 export default function Home() {
-    const { theme } = useTheme();
     const [request, setRequest] = useState<{days?: string, city?: string}>({})
     let [itinerary, setItinerary] = useState<string>('')
-
     const [loading, setLoading] = useState(false)
     const [message, setMessage] = useState('')
-    async function hitAPI() {
-        if (!request.city || !request.days) return
-        if (loading) return
-        setMessage('Building itinerary...')
-        setLoading(true)
-        setItinerary('')
-
-        // get itinerary
+    const [points, setPoint] = useState([])
+    async function getItinerary() {
         const response = await fetch('/api/get-itinerary', {
             method: 'POST',
             body: JSON.stringify({
@@ -38,26 +19,61 @@ export default function Home() {
                 city: request.city
             })
         })
-        const json = await response.json()
-        let itinerary = json.itinerary_text
-
-        setItinerary(itinerary)
-        setMessage('Places are sorted ...')
-
-        // get points of interest
-        const get_points_of_interest = await fetch('/api/get-points-of-interest', {
+        return await response.json()
+    }
+    async function getPointsOfInterest(pointsOfInterestPrompt) {
+        const response = await fetch('/api/get-points-of-interest', {
             method: 'POST',
             body: JSON.stringify({
-                pointsOfInterestPrompt: json.pointsOfInterestPrompt,
+                pointsOfInterestPrompt: pointsOfInterestPrompt,
             })
         })
-        const get_points_interest_result = await get_points_of_interest.json()
+        return await response.json()
+    }
+    async function getPlaceDetails(pointsOfInterest) {
+        const response = await fetch('/api/get-locations', {
+            method: 'POST',
+            body: JSON.stringify({
+                pointsOfInterest: pointsOfInterest,
+                city: request.city
+            })
+        })
+        return await response.json()
+    }
+    async function hitAPI() {
+        if (!request.city || !request.days) return
+        if (loading) return
+        setMessage('Building itinerary...')
+        setLoading(true)
+        setItinerary('')
+        setPoint([])
+
+        // get itinerary
+        const get_itinerary = await getItinerary()
+        let itinerary_text = get_itinerary.itinerary_text
+
+        setItinerary(itinerary_text)
+        setMessage('Places are sorted ...')
+
+        let pointsOfInterestPrompt = 'Extract the main points of interest out of this text, with no additional words, only the names of the locations, separated by commas: ' + itinerary_text
+
+        // get points of interest
+        const get_points_interest_result = await getPointsOfInterest(pointsOfInterestPrompt)
         let pointsOfInterest = JSON.parse(get_points_interest_result.pointsOfInterest)
         pointsOfInterest.map(point => {
-            itinerary = itinerary.replace(point, `[${point}](https://www.google.com/search?q=${encodeURIComponent(point + ' ' + request.city)})`)
+            itinerary_text = itinerary_text.replace(point, `[${point}](https://www.google.com/search?q=${encodeURIComponent(point + ' ' + request.city)})`)
         })
 
-        setItinerary(itinerary)
+        setItinerary(itinerary_text)
+        setMessage('Place details are being taken ...')
+
+        // get place details
+        const get_place_details = await getPlaceDetails(get_points_interest_result.pointsOfInterest)
+        setPoint(get_place_details.locations)
+        setMessage('')
+
+        console.log('points', points)
+
         setLoading(false)
     }
 
@@ -122,64 +138,59 @@ export default function Home() {
             </Row>
             <Spacer y={1} />
             <Row gap={1}>
-
-                <Col>
-
-
-                    <Grid.Container gap={10} justify="center">
-                        <Grid>
+                <Grid.Container gap={1} justify="center">
+                    <Grid xs={12} sm={6}>
+                        {
+                            loading && (
+                                <Loading color="primary" textColor="primary"
+                                         size="lg"
+                                         css={{
+                                             position: "absolute",
+                                             bgBlur: "#ffffff66",
+                                             borderTop: "$borderWeights$light solid rgba(255, 255, 255, 0.2)",
+                                             bottom: 0,
+                                             paddingTop: 24,
+                                             zIndex: 1,
+                                             width: "100%",
+                                             height: "100%",
+                                             left: 0,
+                                             borderRadius: 8,
+                                         }}>
+                                    {message}
+                                </Loading>
+                            )
+                        }
+                        <Text h6 size={15} color="white" css={{ m: 0 }}>
                             {
-                                loading && (
-                                    <Loading color="secondary" textColor="secondary"
-                                             size="lg"
-                                             css={{
-                                                 position: "absolute",
-                                                 bgBlur: "#ffffff66",
-                                                 borderTop: "$borderWeights$light solid rgba(255, 255, 255, 0.2)",
-                                                 bottom: 0,
-                                                 paddingTop: 24,
-                                                 zIndex: 1,
-                                                 width: "100%",
-                                                 height: "100%",
-                                                 left: 0,
-                                                 borderRadius: 8,
-                                             }}>
-                                        {message}
-                                    </Loading>
-                                )
-                            }
-                            <Text h6 size={15} color="white" css={{ m: 0 }}>
-                                {
-                                    itinerary && days.map((day, index) => (
-                                        // <p
-                                        //   key={index}
-                                        //   style={{marginBottom: '20px'}}
-                                        //   dangerouslySetInnerHTML={{__html: `Day ${day}`}}
-                                        // />
-                                        <div
-                                            style={{marginBottom: '30px'}}
-                                            key={index}
+                                itinerary && days.map((day, index) => (
+                                    <div
+                                        style={{marginBottom: '30px'}}
+                                        key={index}
+                                    >
+                                        <ReactMarkdown
+                                            remarkPlugins={[remarkGfm]}
+                                            components={{
+                                                a: props => {
+                                                    return <a target="_blank" rel="noopener noreferrer" href={props.href}>{props.children}</a>
+                                                }
+                                            }}
                                         >
-                                            <ReactMarkdown
-                                                remarkPlugins={[remarkGfm]}
-                                                components={{
-                                                    a: props => {
-                                                        return <a target="_blank" rel="noopener noreferrer" href={props.href}>{props.children}</a>
-                                                    }
-                                                }}
-                                            >
-                                                {`Day ${day}`}
-                                            </ReactMarkdown>
-                                        </div>
-                                    ))
-                                }
-                            </Text>
-                        </Grid>
-                    </Grid.Container>
-                </Col>
+                                            {`Day ${day}`}
+                                        </ReactMarkdown>
+                                    </div>
+                                ))
+                            }
+                        </Text>
+                    </Grid>
+                    <Grid xs={12} sm={6}>
+                        {
+                            points.length > 0 && (
+                                <MapContainer locations={points} />
+                            )
+                        }
+                    </Grid>
+                </Grid.Container>
             </Row>
-
         </Container>
     );
-
 }
