@@ -1,5 +1,7 @@
 # GPT to Tripian
 
+<img src="./ss.jpg">
+
 ### Install
 
 Configure API keys in `.env`:
