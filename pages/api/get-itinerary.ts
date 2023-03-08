@@ -36,8 +36,8 @@ export default async function handler(
       body: JSON.stringify({
         model: 'gpt-3.5-turbo',
         prompt: basePrompt,
-        temperature: 0,
-        max_tokens: 600
+        temperature: 0.3,
+        max_tokens: 2000
       })
     })
     const itinerary = await response.json()
