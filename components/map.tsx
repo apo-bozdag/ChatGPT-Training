@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {GoogleMap, LoadScript, Marker, InfoWindow} from '@react-google-maps/api';
-import {param} from "./../constants";
+import {GOOGLE_MAP_KEY} from "@/constants";
 import {Button, Card, Col, Row, Text} from '@nextui-org/react';
 
 const MapContainer = ({locations}) => {
@@ -24,7 +24,7 @@ const MapContainer = ({locations}) => {
 
     return (
         <LoadScript
-            googleMapsApiKey={param.GOOGLE_MAP_KEY}>
+            googleMapsApiKey={GOOGLE_MAP_KEY}>
             <GoogleMap
                 mapContainerStyle={mapStyles}
                 zoom={13}
