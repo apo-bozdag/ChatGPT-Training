@@ -1,9 +1,7 @@
 import React, {useState} from 'react';
 import {GoogleMap, LoadScript, Marker, InfoWindow} from '@react-google-maps/api';
-import {GOOGLE_MAP_KEY} from "../constants";
 import {Button, Card, Col, Row, Text} from '@nextui-org/react';
-
-const MapContainer = ({locations}) => {
+const MapContainer = ({locations, gm_key}) => {
 
     const mapStyles = {
         height: "100vh",
@@ -24,7 +22,7 @@ const MapContainer = ({locations}) => {
 
     return (
         <LoadScript
-            googleMapsApiKey={GOOGLE_MAP_KEY}>
+            googleMapsApiKey={gm_key}>
             <GoogleMap
                 mapContainerStyle={mapStyles}
                 zoom={13}

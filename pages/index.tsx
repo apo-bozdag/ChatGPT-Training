@@ -4,7 +4,7 @@ import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import Header from '@/components/header'
 import MapContainer from "@/components/map";
-
+const GOOGLE_MAP_KEY = process.env.GS_KEY
 export default function Home() {
     const [request, setRequest] = useState<{ days?: string, city?: string }>({})
     let [itinerary, setItinerary] = useState<string>('')
@@ -190,7 +190,7 @@ export default function Home() {
                     <Grid xs={12} sm={6}>
                         {
                             points.length > 0 && (
-                                <MapContainer locations={points}/>
+                                <MapContainer locations={points} gm_key={GOOGLE_MAP_KEY}/>
                             )
                         }
                     </Grid>
