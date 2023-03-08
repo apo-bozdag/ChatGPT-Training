@@ -19,7 +19,6 @@ export default async function handler(
     await Promise.all(pointsOfInterest.map(async point => {
         try {
             const GSURL = `https://www.googleapis.com/customsearch/v1?key=${GS_KEY}&cx=6573f103116714e0d&q=${point + ' in ' + city}`
-
             const response = await fetch(GSURL)
             const location = await response.json()
 

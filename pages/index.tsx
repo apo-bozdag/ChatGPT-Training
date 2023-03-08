@@ -6,11 +6,12 @@ import Header from '@/components/header'
 import MapContainer from "@/components/map";
 
 export default function Home() {
-    const [request, setRequest] = useState<{days?: string, city?: string}>({})
+    const [request, setRequest] = useState<{ days?: string, city?: string }>({})
     let [itinerary, setItinerary] = useState<string>('')
     const [loading, setLoading] = useState(false)
     const [message, setMessage] = useState('')
     const [points, setPoint] = useState([])
+
     async function getItinerary() {
         const response = await fetch('/api/get-itinerary', {
             method: 'POST',
@@ -21,6 +22,7 @@ export default function Home() {
         })
         return await response.json()
     }
+
     async function getPointsOfInterest(pointsOfInterestPrompt) {
         const response = await fetch('/api/get-points-of-interest', {
             method: 'POST',
@@ -30,6 +32,7 @@ export default function Home() {
         })
         return await response.json()
     }
+
     async function getPlaceDetails(pointsOfInterest) {
         const response = await fetch('/api/get-locations', {
             method: 'POST',
@@ -40,6 +43,7 @@ export default function Home() {
         })
         return await response.json()
     }
+
     async function hitAPI() {
         if (!request.city || !request.days) return
         if (loading) return
@@ -86,7 +90,7 @@ export default function Home() {
     }
     return (
         <Container gap={0} fluid>
-            <Header title="ChatGPT 💙 Tripian" />
+            <Header title="ChatGPT 💙 Tripian"/>
             <Row gap={1}>
                 <Col>
                     <Text
@@ -116,14 +120,14 @@ export default function Home() {
                                 }}>
                                     <Input placeholder="City" onChange={e => setRequest(request => ({
                                         ...request, city: e.target.value
-                                    }))} />
+                                    }))}/>
                                     <Input placeholder="Days" onChange={e => setRequest(request => ({
                                         ...request, days: e.target.value
-                                    }))} />
-                                    <Button className="input-button"  onClick={hitAPI}>
+                                    }))}/>
+                                    <Button className="input-button" onClick={hitAPI}>
                                         {
                                             loading ?
-                                                <Loading type="points" color="currentColor" size="sm" />
+                                                <Loading type="points" color="currentColor" size="sm"/>
                                                 :
                                                 'Build Itinerary'
                                         }
@@ -136,10 +140,10 @@ export default function Home() {
                     </Card>
                 </Col>
             </Row>
-            <Spacer y={1} />
+            <Spacer y={1}/>
             <Row gap={1}>
                 <Grid.Container gap={1} justify="center">
-                    <Grid xs={12} sm={6}>
+                    <Grid xs={12} sm={6} css={{minHeight: 150}}>
                         {
                             loading && (
                                 <Loading color="primary" textColor="primary"
@@ -160,7 +164,7 @@ export default function Home() {
                                 </Loading>
                             )
                         }
-                        <Text h6 size={15} color="white" css={{ m: 0 }}>
+                        <Text h6 size={15} color="white" css={{m: 0}}>
                             {
                                 itinerary && days.map((day, index) => (
                                     <div
@@ -171,7 +175,8 @@ export default function Home() {
                                             remarkPlugins={[remarkGfm]}
                                             components={{
                                                 a: props => {
-                                                    return <a target="_blank" rel="noopener noreferrer" href={props.href}>{props.children}</a>
+                                                    return <a target="_blank" rel="noopener noreferrer"
+                                                              href={props.href}>{props.children}</a>
                                                 }
                                             }}
                                         >
@@ -185,7 +190,7 @@ export default function Home() {
                     <Grid xs={12} sm={6}>
                         {
                             points.length > 0 && (
-                                <MapContainer locations={points} />
+                                <MapContainer locations={points}/>
                             )
                         }
                     </Grid>
