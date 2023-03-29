@@ -23,8 +23,8 @@ export default async function handler(
             const location = await response.json()
             console.log('location: ', location)
 
-            if (location && location.results && location.results.length > 0) {
-                let result = location.results[0]
+            if (location && location.candidates && location.candidates.length > 0) {
+                let result = location.candidates[0]
                 let name = result.name
                 let photo_reference = result.photos && result.photos.length > 0 ? result.photos[0].photo_reference : null
                 let lat = result.geometry.location.lat
