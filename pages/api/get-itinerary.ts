@@ -1,18 +1,21 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { Configuration, OpenAIApi } from "openai";
+
 type Data = {
   message: string,
   itinerary_text: any,
 }
 
-const configuration = new Configuration({ apiKey: process.env.GPT_API_KEY });
-const openAi = new OpenAIApi(configuration);
+const GPT_KEY = process.env.GPT_API_KEY
 
+const headers = {
+  'Content-Type': 'application/json',
+  'Authorization': `Bearer ${GPT_KEY}`
+}
 
 export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse<Data>
+    req: NextApiRequest,
+    res: NextApiResponse<Data>
 ) {
   let days = 4, city = 'Rio'
   if (req.body) {
@@ -27,16 +30,21 @@ export default async function handler(
 
   let basePrompt = `give me an itinerary for ${days} days in ${city}`
   try {
-    const response = await openAi.createEmbedding({
-      model: "gpt-3.5-turbo",
-      input: basePrompt
-    });
-
-    const [{ embedding }] = response.data.data;
+    const response = await fetch('https://api.openai.com/v1/completions', {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({
+        model: 'text-davinci-003',
+        prompt: basePrompt,
+        temperature: 0,
+        max_tokens: 600
+      })
+    })
+    const itinerary = await response.json()
 
     let itinerary_text;
-    if (embedding) {
-      itinerary_text = embedding
+    if (itinerary.choices.length > 0) {
+      itinerary_text = itinerary.choices[0].text
     }
 
 
