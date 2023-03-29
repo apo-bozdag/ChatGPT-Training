@@ -18,9 +18,10 @@ export default async function handler(
     const locations: {}[] = []
     await Promise.all(pointsOfInterest.map(async point => {
         try {
-            const GSURL = `https://www.googleapis.com/customsearch/v1?key=${GS_KEY}&cx=6573f103116714e0d&q=${point + ' in ' + city}`
+            const GSURL = `https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input=${point + ' in ' + city}&inputtype=textquery&fields=photos,formatted_address,name,rating,opening_hours,geometry&key=${GS_KEY}`
             const response = await fetch(GSURL)
             const location = await response.json()
+            console.log('location: ', location)
 
             if (location && location.results && location.results.length > 0) {
                 let result = location.results[0]
