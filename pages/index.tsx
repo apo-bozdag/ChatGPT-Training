@@ -90,7 +90,7 @@ export default function Home() {
     }
     return (
         <Container gap={0} fluid>
-            <Header title="ChatGPT 💙 Tripian"/>
+            <Header title="ChatGPT Training"/>
             <Row gap={1}>
                 <Col>
                     <Text
