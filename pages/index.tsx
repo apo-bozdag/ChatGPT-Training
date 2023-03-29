@@ -104,7 +104,7 @@ export default function Home() {
                         }}
                         weight="bold"
                     >
-                        ChatGPT to Tripian
+                        ChatGPT Training
                     </Text>
                 </Col>
             </Row>
