@@ -190,7 +190,7 @@ export default function Home() {
                     <Grid xs={12} sm={6}>
                         {
                             points.length > 0 && (
-                                <MapContainer locations={points} gm_key={GOOGLE_MAP_KEY}/>
+                                <MapContainer locations={points}/>
                             )
                         }
                     </Grid>

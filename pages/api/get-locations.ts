@@ -16,7 +16,8 @@ export default async function handler(
     pointsOfInterest = JSON.parse(pointsOfInterest)
 
     const locations: {}[] = []
-    await Promise.all(pointsOfInterest.map(async point => {
+
+    for (const point of pointsOfInterest) {
         try {
             const GSURL = `https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input=${point + ' in ' + city}&inputtype=textquery&fields=photos,formatted_address,name,rating,opening_hours,geometry&key=${GS_KEY}`
             const response = await fetch(GSURL)
@@ -49,7 +50,7 @@ export default async function handler(
         } catch (err) {
             console.log('error: ', err)
         }
-    }))
+    }
 
     res.status(200).json({
         locations,
